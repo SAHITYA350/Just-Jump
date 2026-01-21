@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Just Jump</title>
+    
+    <!-- Favicon (inline SVG to avoid 404) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🎮</text></svg>">
+    
+    <!-- Howler.js for Advanced Audio -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    
+    <!-- Anime.js for Smooth Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Particles.js for Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <!-- Rotate Device Overlay -->
+    <div id="rotateOverlay" class="rotate-overlay hidden">
+        <div class="rotate-content">
+            <div class="rotate-icon">
+                <svg viewBox="0 0 100 100">
+                    <rect x="20" y="30" width="60" height="40" rx="5" fill="none" stroke="#ffd700" stroke-width="3"/>
+                    <path d="M 50 75 Q 30 85 25 70 T 25 50" fill="none" stroke="#ffd700" stroke-width="2"/>
+                    <path d="M 50 75 Q 70 85 75 70 T 75 50" fill="none" stroke="#ffd700" stroke-width="2"/>
+                </svg>
+            </div>
+            <p>Please rotate your device to landscape mode</p>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <h1 class="game-logo">Just JUMP</h1>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            <p class="loading-text">Loading Assets...</p>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="mainMenu" class="menu-screen hidden">
+        <div id="particles-js"></div>
+        <div class="menu-content">
+            <h1 class="game-title">
+                <span class="title-premium">Made by Sahitya</span>
+                <span class="title-main">Just Jump</span>
+            </h1>
+            <div class="menu-buttons">
+                <button class="btn-primary" id="startBtn">
+                    <span class="btn-icon">▶</span> START GAME
+                </button>
+                <button class="btn-secondary" id="settingsBtn">
+                    <span class="btn-icon">⚙</span> SETTINGS
+                </button>
+            </div>
+            <div class="highscore-display">
+                <span class="highscore-label">HIGH SCORE</span>
+                <span class="highscore-value" id="highScoreDisplay">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div id="settingsPanel" class="settings-panel hidden">
+        <div class="settings-content">
+            <h2>SETTINGS</h2>
+            <div class="settings-group">
+                <div class="setting-item">
+                    <label for="masterVolume">Master Volume</label>
+                    <input type="range" id="masterVolume" min="0" max="100" value="70">
+                    <span class="volume-value">70%</span>
+                </div>
+                <div class="setting-item">
+                    <label for="bgMusicToggle">Background Music</label>
+                    <label class="toggle">
+                        <input type="checkbox" id="bgMusicToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label for="sfxToggle">Sound Effects</label>
+                    <label class="toggle">
+                        <input type="checkbox" id="sfxToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            <button class="btn-primary" id="closeSettings">CLOSE</button>
+        </div>
+    </div>
+
+
+    <!-- Game Container -->
+    <div id="gameContainer" class="game-container hidden">
+        <!-- HUD -->
+        <div class="hud">
+            <div class="hud-left">
+                <div class="stat-box">
+                    <span class="stat-label">SCORE</span>
+                    <span class="stat-value" id="scoreValue">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">HEIGHT</span>
+                    <span class="stat-value" id="heightValue">0m</span>
+                </div>
+            </div>
+            <div class="hud-right">
+                <button class="hud-btn" id="pauseBtn" title="Pause">⏸</button>
+                <button class="hud-btn" id="soundToggle" title="Sound">🔊</button>
+                <button class="hud-btn" id="quitBtn" title="Quit">✕</button>
+            </div>
+        </div>
+        
+        <!-- Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Mobile Touch Controls -->
+        <div class="mobile-controls">
+            <div class="control-zone control-left" id="moveLeft">
+                <div class="control-icon">◄</div>
+            </div>
+            <div class="control-zone control-jump" id="jumpBtn">
+                <div class="control-icon">▲</div>
+            </div>
+            <div class="control-zone control-right" id="moveRight">
+                <div class="control-icon">►</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pause Menu -->
+    <div id="pauseMenu" class="pause-menu hidden">
+        <div class="pause-content">
+            <h2>PAUSED</h2>
+            <div class="pause-buttons">
+                <button class="btn-primary" id="resumeBtn">
+                    <span class="btn-icon">▶</span> RESUME
+                </button>
+                <button class="btn-secondary" id="restartBtn">
+                    <span class="btn-icon">↻</span> RESTART
+                </button>
+                <button class="btn-secondary" id="mainMenuBtn">
+                    <span class="btn-icon">🏠</span> MAIN MENU
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen" class="gameover-screen hidden">
+        <div class="gameover-content">
+            <h1 class="gameover-title">GAME OVER</h1>
+            <div class="gameover-stats">
+                <div class="stat-item">
+                    <span class="stat-label">FINAL SCORE</span>
+                    <span class="stat-value" id="finalScore">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">MAX HEIGHT</span>
+                    <span class="stat-value" id="finalHeight">0m</span>
+                </div>
+                <div class="stat-item new-record hidden" id="newRecord">
+                    <span class="record-badge">🏆 NEW RECORD!</span>
+                </div>
+            </div>
+            <div class="gameover-buttons">
+                <button class="btn-primary" id="playAgainBtn">
+                    <span class="btn-icon">↻</span> PLAY AGAIN
+                </button>
+                <button class="btn-secondary" id="backToMenuBtn">
+                    <span class="btn-icon">🏠</span> MAIN MENU
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts - Load in correct order -->
+    <script src="./js/config.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./data/collisions.js"></script>
+    <script src="./js/audio.js"></script>
+    <script src="./js/classes/CollisionBlock.js"></script>
+    <script src="./js/classes/Sprite.js"></script>
+    <script src="./js/classes/Player.js"></script>
+    <script src="./js/classes/Game.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>
