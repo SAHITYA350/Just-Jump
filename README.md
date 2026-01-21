@@ -1,4 +1,4 @@
-# 🎮 Premium Jump Quest
+# 🎮 Just Jump
 
 A physics-based 2D platformer game with stunning visuals, realistic mechanics, and immersive audio.
 
