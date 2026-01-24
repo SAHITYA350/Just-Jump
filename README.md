@@ -1,4 +1,6 @@
 # 🎮 Just Jump
+<img width="1909" height="1006" alt="image" src="https://github.com/user-attachments/assets/57271df4-af4f-4f3e-b9d2-e69af79374c4" />
+
 
 A physics-based 2D platformer game with stunning visuals, realistic mechanics, and immersive audio.
 
